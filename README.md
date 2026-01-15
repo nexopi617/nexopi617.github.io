@@ -48,3 +48,8 @@ git push -u origin main
 - يمكنك تسميته أيضًا `🪄 Ritual of Genesis` أو `🚀 Launch Spell` إذا أردت طابعًا أكثر أسطورية.
 
 هل تحب أن أدمجه لك داخل ملف `README.md` بالكامل؟ أو ننتقل الآن إلى خطوة ربط الدومين الرمزي؟
+git init
+git remote add origin https://github.com/nexopi617/nexo-app
+git add .
+git commit -m "Initial symbolic upload"
+git push -u origin main
