@@ -33,3 +33,18 @@ This repo contains its core logic, UI flows, and Pi Testnet integration.
 git clone https://github.com/nexopi617/nexo-app
 cd nexo-app
 # افتح الملف index.html مباشرة في المتصفح
+## 🔥 طقس التفعيل
+
+```bash
+git init
+git remote add origin https://github.com/nexopi617/nexo-app
+git add .
+git commit -m "Initial symbolic upload"
+git push -u origin main
+---
+
+### 📌 ملاحظات رمزية:
+- هذا القسم يُظهر للزوار كيف بدأ المشروع من الصفر.
+- يمكنك تسميته أيضًا `🪄 Ritual of Genesis` أو `🚀 Launch Spell` إذا أردت طابعًا أكثر أسطورية.
+
+هل تحب أن أدمجه لك داخل ملف `README.md` بالكامل؟ أو ننتقل الآن إلى خطوة ربط الدومين الرمزي؟
