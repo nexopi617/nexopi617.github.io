@@ -1,0 +1,16 @@
+name: Deploy Nexo App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Echo Ritual
+        run: echo "✨ تنفيذ طقس النشر الرمزي لتطبيق Nexo بنجاح ✨"
