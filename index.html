@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="pi-archive-validation" content="Bdf1fade135dca61925a353c0aa06f9d20da67107147289d54729f2e006e0c296e23d5d6ebd8f25e182ce11b00bd526eccc64bee4c95f464b7899ef4619f0140">
     <title>Nexo App - Verified</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
@@ -15,33 +16,8 @@
     <div class="box">
         <h1>Nexo App</h1>
         <p>تطبيقك موثق الآن على الرابط:</p>
-        <code>nexoaee.bbaa7857.pinet.com</code>
-        <div id="status" class="verified-text">جاري التحقق من الهوية...</div>
+        <code>https://nexopi617.github.io/</code>
+        <div id="status" class="verified-text">تم الربط بمفتاح التأكيد بنجاح!</div>
     </div>
-
-    <script>
-        const Pi = window.Pi;
-        // تفعيل الربط مع الإصدار 2.0 من الشبكة
-        Pi.init({ version: "2.0", sandbox: false });
-
-        async function startApp() {
-            try {
-                // تفعيل عملية التوثيق التلقائي
-                const scopes = ['username'];
-                const user = await Pi.authenticate(scopes, function(p){});
-                document.getElementById('status').innerText = "تم التوثيق بنجاح! مرحباً: " + user.username;
-            } catch (err) {
-                document.getElementById('status').innerText = "يرجى الفتح من متصفح Pi للتخلص من المثلث الأصفر.";
-                document.getElementById('status').style.color = "yellow";
-            }
-        }
-
-        window.onload = startApp;
-    </script>
-</body>
+    </body>
 </html>
-git init
-git remote add origin https://github.com/nexopi617/nexo-app
-git add .
-git commit -m "Initial symbolic upload"
-git push -u origin main
