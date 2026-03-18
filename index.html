@@ -3,21 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="pi-archive-validation" content="Bdf1fade135dca61925a353c0aa06f9d20da67107147289d54729f2e006e0c296e23d5d6ebd8f25e182ce11b00bd526eccc64bee4c95f464b7899ef4619f0140">
-    <title>Nexo App - Verified</title>
+    <title>Nexo Global - Web3 Payments</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #000; color: #ffa500; padding: 50px; }
-        .box { border: 2px solid #7c4dff; padding: 30px; border-radius: 20px; background: #1a1a1a; }
-        .verified-text { color: #00ff00; font-weight: bold; font-size: 1.2em; }
+        body { font-family: sans-serif; text-align: center; background: #f4f4f9; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; }
+        .btn-payment { background: #5e35b1; color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; font-size: 18px; font-bold: true; }
+        .btn-payment:hover { background: #4527a0; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>Nexo App</h1>
-        <p>تطبيقك موثق الآن على الرابط:</p>
-        <code>https://nexopi617.github.io/</code>
-        <div id="status" class="verified-text">تم الربط بمفتاح التأكيد بنجاح!</div>
+
+    <div class="card">
+        <h1>تطبيق Nexo Global</h1>
+        <p>اضغط على الزر أدناه لإتمام الخطوة رقم 10 في متصفح Pi</p>
+        
+        <button class="btn-payment" onclick="makePayment()">إرسال 0.1 Pi للتجربة</button>
     </div>
-    </body>
+
+    <script>
+        // تهيئة الـ SDK
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0", sandbox: false });
+
+        // كود عملية الدفع الذي طلبته
+        function makePayment() {
+            const payment = Pi.createPayment({
+                amount: 0.1, 
+                memo: "تجربة نظام الدفع في Nexo Global",
+                metadata: { appId: "nexopi617" },
+            }, {
+                onReadyForServerApproval: function(paymentId) {
+                    console.log("الطلب بانتظار موافقة الخادم: " + paymentId);
+                    // في هذه المرحلة التجريبية، النظام سيحاول إكمالها تلقائياً
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                    alert("تمت عملية الدفع بنجاح! رقم المعاملة: " + txid);
+                },
+                onCancel: function(paymentId) {
+                    console.log("تم إلغاء الدفع");
+                },
+                onError: function(error, payment) {
+                    console.error("خطأ في الدفع: ", error);
+                },
+            });
+        }
+    </script>
+</body>
 </html>
