@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Step 10</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body style="text-align:center; padding-top:50px; font-family:sans-serif; background:#f4f4f9;">
     <div style="background:white; padding:30px; border-radius:20px; display:inline-block; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
         <h2>Nexo Global</h2>
-        <p>اضغط لتأكيد العملية النهائية</p>
-        <button id="pay-button" style="padding:15px 30px; background:#5e35b1; color:white; border:none; border-radius:12px; font-size:18px; cursor:pointer;">دفع 0.001 Pi (تجريبي)</button>
+        <p>جاهز لإتمام الخطوة العاشرة</p>
+        <button id="pay-button" style="padding:15px 30px; background:#5e35b1; color:white; border:none; border-radius:12px; font-size:18px; cursor:pointer;">إرسال 0.001 Pi (تجربة)</button>
     </div>
 
     <script>
@@ -19,24 +18,19 @@
 
         document.getElementById('pay-button').onclick = async () => {
             try {
-                // توثيق المستخدم وحل مشكلة الـ Scope
-                await Pi.authenticate(['payments', 'username'], function(payment) {
-                    console.log("Incomplete payment found");
-                });
-
-                // بدء عملية الدفع الرسمية
+                await Pi.authenticate(['payments', 'username'], function(p){});
                 await Pi.createPayment({
                     amount: 0.001,
-                    memo: "Nexo Activation Step 10",
-                    metadata: { appId: "nexopi617" },
+                    memo: "Nexo Step 10 Final",
+                    metadata: { appId: "nexopi617" }
                 }, {
-                    onReadyForServerApproval: (id) => console.log("Approved"),
-                    onReadyForServerCompletion: (id, txid) => alert("مبروك! تمت العملية بنجاح. كود المعاملة: " + txid),
-                    onCancel: (id) => alert("تم إلغاء العملية"),
-                    onError: (err) => alert("خطأ في الدفع: " + err.message)
+                    onReadyForServerApproval: (id) => console.log(id),
+                    onReadyForServerCompletion: (id, tx) => alert("نجحت! المعاملة: " + tx),
+                    onCancel: (id) => alert("تم الإلغاء"),
+                    onError: (err) => alert("خطأ: " + err.message)
                 });
-            } catch (err) {
-                alert("يرجى فتح الموقع من متصفح Pi Browser حصراً");
+            } catch (e) {
+                alert("يرجى استخدام Pi Browser");
             }
         };
     </script>
