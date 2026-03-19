@@ -68,3 +68,37 @@
     </script>
 </body>
 </html>
+<script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: false });
+
+    // إضافة عملية التوثيق لطلب صلاحية المدفوعات (payments scope)
+    async function transferPi() {
+        try {
+            // الخطوة 1: التوثيق وطلب الصلاحيات
+            const scopes = ['payments', 'username', 'wallet_address'];
+            function onIncompletePaymentFound(payment) { /* لمعالجة المدفوعات العالقة */ }
+
+            await Pi.authenticate(scopes, onIncompletePaymentFound);
+
+            // الخطوة 2: تنفيذ الدفع بعد الحصول على الصلاحية
+            const payment = await Pi.createPayment({
+                amount: 0.001,
+                memo: "دفع تجريبي لتطبيق نيكسو - الخطوة 10",
+                metadata: { 
+                    appId: "nexo-global",
+                    recipient: "GBHXBLVEZT4ZIXTFO43OWP24FK6GW5BKV54GQDWOGCQ2GIEE2AELC447" 
+                },
+            }, {
+                onReadyForServerApproval: (paymentId) => { console.log("بانتظار الموافقة..."); },
+                onReadyForServerCompletion: (paymentId, txid) => {
+                    alert("تمت العملية بنجاح! رقم المعاملة: " + txid);
+                },
+                onCancel: (paymentId) => { alert("تم إلغاء العملية"); },
+                onError: (error, payment) => { alert("خطأ في الدفع: " + error.message); }
+            });
+        } catch (err) {
+            alert("فشل التوثيق: " + err.message + " تأكد من فتح الموقع داخل Pi Browser");
+        }
+    }
+</script>
