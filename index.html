@@ -3,102 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Global - Web3 Payments</title>
+    <title>Nexo Global - Test Payment</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #1c1e21; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
-        h1 { color: #5e35b1; margin-bottom: 10px; }
-        p { font-size: 14px; color: #606770; margin-bottom: 20px; }
-        .wallet-box { background: #f8f9fa; border: 1px dashed #5e35b1; padding: 10px; border-radius: 10px; font-family: monospace; font-size: 11px; word-break: break-all; margin-bottom: 20px; color: #444; }
-        .btn { background: #5e35b1; color: white; border: none; padding: 15px 25px; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: background 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+        h1 { color: #5e35b1; margin-bottom: 15px; }
+        p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        .btn { background: #5e35b1; color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn:hover { background: #4527a0; }
-        .footer-links { margin-top: 20px; font-size: 12px; }
-        .footer-links a { color: #5e35b1; text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
-
-    <div class="container">
+    <div class="card">
         <h1>Nexo Global</h1>
-        <p>مرحباً بك في مستقبل المدفوعات. هذا التطبيق موثق ومرتبط بمحفظتك.</p>
-        
-        <div class="wallet-box">
-            عنوان المحفظة المستلمة:<br>
-            GBHXBLVEZT4ZIXTFO43OWP24FK6GW5BKV54GQDWOGCQ2GIEE2AELC447
-        </div>
-
-        <button class="btn" onclick="transferPi()">إرسال 0.001 Pi (تجربة)</button>
-
-        <div class="footer-links">
-            <a href="privacy.html">سياسة الخصوصية</a>
-            <a href="terms.html">الشروط</a>
-        </div>
+        <p>اضغط أدناه لإرسال 0.001 Pi تجريبي وإتمام الخطوة رقم 10</p>
+        <button class="btn" onclick="payNow()">إرسال 0.001 Pi الآن</button>
     </div>
 
     <script>
-        // تهيئة الـ SDK
         const Pi = window.Pi;
         Pi.init({ version: "2.0", sandbox: false });
 
-        async function transferPi() {
+        async function payNow() {
             try {
-                const payment = await Pi.createPayment({
+                // طلب الصلاحيات أولاً لحل مشكلة "payments scope"
+                const scopes = ['payments', 'username', 'wallet_address'];
+                await Pi.authenticate(scopes, function(p){});
+
+                // تنفيذ عملية الدفع للمحفظة التي زودتني بها
+                await Pi.createPayment({
                     amount: 0.001,
-                    memo: "دفع تجريبي لتطبيق نيكسو - الخطوة 10",
-                    metadata: { 
-                        appId: "nexo-global",
-                        recipient: "GBHXBLVEZT4ZIXTFO43OWP24FK6GW5BKV54GQDWOGCQ2GIEE2AELC447" 
-                    },
+                    memo: "عملية تجريبية لتفعيل تطبيق Nexo Global",
+                    metadata: { appId: "nexopi617" },
                 }, {
                     onReadyForServerApproval: (paymentId) => {
-                        console.log("بانتظار الموافقة: " + paymentId);
+                        console.log("بانتظار الموافقة...");
                     },
                     onReadyForServerCompletion: (paymentId, txid) => {
-                        alert("تمت العملية بنجاح! رقم المعاملة: " + txid);
-                        // سيقوم نظام Pi الآن بتحديث الخطوة العاشرة تلقائياً
+                        alert("مبروك! تمت العملية بنجاح. رقم المعاملة: " + txid);
                     },
-                    onCancel: (paymentId) => { alert("تم إلغاء العملية"); },
-                    onError: (error, payment) => { alert("خطأ: " + error.message); }
+                    onCancel: (paymentId) => {
+                        alert("تم إلغاء عملية الدفع");
+                    },
+                    onError: (error, payment) => {
+                        alert("خطأ: " + error.message);
+                    }
                 });
             } catch (err) {
-                alert("حدث خطأ في النظام: " + err.message);
+                alert("يرجى التأكد من فتح الموقع داخل Pi Browser والموافقة على الصلاحيات");
             }
         }
     </script>
 </body>
 </html>
-<script>
-    const Pi = window.Pi;
-    Pi.init({ version: "2.0", sandbox: false });
-
-    // إضافة عملية التوثيق لطلب صلاحية المدفوعات (payments scope)
-    async function transferPi() {
-        try {
-            // الخطوة 1: التوثيق وطلب الصلاحيات
-            const scopes = ['payments', 'username', 'wallet_address'];
-            function onIncompletePaymentFound(payment) { /* لمعالجة المدفوعات العالقة */ }
-
-            await Pi.authenticate(scopes, onIncompletePaymentFound);
-
-            // الخطوة 2: تنفيذ الدفع بعد الحصول على الصلاحية
-            const payment = await Pi.createPayment({
-                amount: 0.001,
-                memo: "دفع تجريبي لتطبيق نيكسو - الخطوة 10",
-                metadata: { 
-                    appId: "nexo-global",
-                    recipient: "GBHXBLVEZT4ZIXTFO43OWP24FK6GW5BKV54GQDWOGCQ2GIEE2AELC447" 
-                },
-            }, {
-                onReadyForServerApproval: (paymentId) => { console.log("بانتظار الموافقة..."); },
-                onReadyForServerCompletion: (paymentId, txid) => {
-                    alert("تمت العملية بنجاح! رقم المعاملة: " + txid);
-                },
-                onCancel: (paymentId) => { alert("تم إلغاء العملية"); },
-                onError: (error, payment) => { alert("خطأ في الدفع: " + error.message); }
-            });
-        } catch (err) {
-            alert("فشل التوثيق: " + err.message + " تأكد من فتح الموقع داخل Pi Browser");
-        }
-    }
-</script>
