@@ -51,3 +51,28 @@
     </script>
 </body>
 </html>
+// أضف هذه الوظيفة للتعامل مع المدفوعات غير المكتملة
+function onIncompletePaymentFound(payment) {
+    console.log("وجدت عملية معلقة: " + payment.identifier);
+    // يمكنك هنا إخبار السيرفر بإلغائها أو إكمالها
+};
+
+async function startSetup() {
+    try {
+        // طلب التوثيق مع معالجة العمليات المعلقة
+        await Pi.authenticate(['payments', 'username'], onIncompletePaymentFound);
+
+        await Pi.createPayment({
+            amount: 0.001,
+            memo: "تفعيل Nexo Step 10",
+            metadata: { appId: "nexopi617" },
+        }, {
+            onReadyForServerApproval: (id) => { console.log("Approved"); },
+            onReadyForServerCompletion: (id, txid) => { alert("نجحت! رقم المعاملة: " + txid); },
+            onCancel: (id) => { console.log("Canceled"); },
+            onError: (err) => { alert("خطأ: " + err.message); }
+        });
+    } catch (err) {
+        alert("خطأ في الاتصال: " + err.message);
+    }
+}
