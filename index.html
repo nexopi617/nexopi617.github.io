@@ -1,48 +1,44 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Global</title>
+    <title>Nexo Step 10</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .btn { background: #5e35b1; color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 20px; cursor: pointer; font-weight: bold; }
-    </style>
 </head>
-<body>
-    <div class="card">
-        <h1>Nexo Global</h1>
-        <button class="btn" onclick="payNow()">إرسال 0.001 Pi الآن</button>
+<body style="text-align:center; padding-top:50px; font-family:sans-serif; background:#f4f4f9;">
+    <div style="background:white; padding:30px; border-radius:20px; display:inline-block; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+        <h2>Nexo Global</h2>
+        <p>اضغط لتأكيد العملية النهائية</p>
+        <button id="pay-button" style="padding:15px 30px; background:#5e35b1; color:white; border:none; border-radius:12px; font-size:18px; cursor:pointer;">دفع 0.001 Pi (تجريبي)</button>
     </div>
 
     <script>
         const Pi = window.Pi;
         Pi.init({ version: "2.0", sandbox: false });
 
-        async function payNow() {
+        document.getElementById('pay-button').onclick = async () => {
             try {
-                // طلب التوثيق أولاً لفك التعليق
+                // توثيق المستخدم وحل مشكلة الـ Scope
                 await Pi.authenticate(['payments', 'username'], function(payment) {
-                    console.log("Incomplete payment handled");
+                    console.log("Incomplete payment found");
                 });
 
-                // بدء الدفع فوراً
+                // بدء عملية الدفع الرسمية
                 await Pi.createPayment({
                     amount: 0.001,
-                    memo: "Activation Step 10",
+                    memo: "Nexo Activation Step 10",
                     metadata: { appId: "nexopi617" },
                 }, {
                     onReadyForServerApproval: (id) => console.log("Approved"),
-                    onReadyForServerCompletion: (id, txid) => alert("تمت بنجاح! رقم العملية: " + txid),
-                    onCancel: (id) => alert("تم الإلغاء"),
-                    onError: (err) => alert("خطأ: " + err.message)
+                    onReadyForServerCompletion: (id, txid) => alert("مبروك! تمت العملية بنجاح. كود المعاملة: " + txid),
+                    onCancel: (id) => alert("تم إلغاء العملية"),
+                    onError: (err) => alert("خطأ في الدفع: " + err.message)
                 });
             } catch (err) {
-                alert("يرجى إعادة المحاولة: " + err.message);
+                alert("يرجى فتح الموقع من متصفح Pi Browser حصراً");
             }
-        }
+        };
     </script>
 </body>
 </html>
