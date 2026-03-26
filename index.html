@@ -1,43 +1,64 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexo Global | نكسو العالمية</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        :root { --primary: #5e35b1; --gold: #ffd700; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: white; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .card { background: #16213e; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; border-top: 4px solid var(--gold); }
+        .logo { font-size: 32px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+        h2 { margin: 10px 0; font-size: 22px; }
+        p { color: #95a5a6; font-size: 14px; margin-bottom: 25px; }
+        .pay-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .pay-btn:hover { background: #4527a0; transform: translateY(-2px); }
+        .footer { margin-top: 20px; font-size: 12px; color: #533483; }
+    </style>
 </head>
-<body style="text-align:center; padding-top:50px; font-family:sans-serif; background:#f4f4f9;">
-    <h2>Nexo Global - تأكيد أخير</h2>
-    <button id="pay-btn" style="padding:15px 30px; background:#5e35b1; color:white; border:none; border-radius:12px; font-size:20px; cursor:pointer;">دفع 0.001 Pi الآن</button>
+<body>
 
-    <script>
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: false });
+<div class="card">
+    <div class="logo">NEXO</div>
+    <h2>نكسو العالمية - الخطوة النهائية</h2>
+    <p>أنت الآن في مرحلة التوثيق الرقمي للمشروع. يرجى تأكيد العملية لتفعيل هويتك في النظام البيئي.</p>
+    
+    <button id="pay-btn" class="pay-btn">دفع 0.001 Pi الآن</button>
+    
+    <div class="footer">تطوير: Mohamed Ammar &copy; 2026</div>
+</div>
 
-        async function startProcess() {
-            try {
-                // 1. تنظيف أي عملية "تدور" قديمة
-                await Pi.authenticate(['payments', 'username'], function(payment) {
-                    if (payment) {
-                        alert("تم العثور على عملية عالقة وجاري معالجتها...");
-                    }
-                });
+<script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: false });
 
-                // 2. طلب دفع جديد فوراً
-                await Pi.createPayment({
+    async function startProcess() {
+        try {
+            const scopes = ['payments', 'username'];
+            function onIncompletePaymentFound(payment) {
+                console.log("Found incomplete payment", payment);
+            };
+
+            Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+                Pi.createPayment({
                     amount: 0.001,
                     memo: "Nexo Step 10 Final Fix",
                     metadata: { appId: "nexopi617" }
                 }, {
-                    onReadyForServerApproval: (id) => console.log("Approved"),
-                    onReadyForServerCompletion: (id, tx) => alert("مبروك! تمت بنجاح: " + tx),
-                    onCancel: (id) => alert("تم الإلغاء"),
-                    onError: (err) => alert("خطأ: " + err.message)
+                    onReadyForServerApproval: (id) => console.log("Approved ID:", id),
+                    onReadyForServerCompletion: (id, tx) => alert("تم التوثيق بنجاح! رقم المعاملة: " + tx),
+                    onCancel: (id) => console.log("User cancelled"),
+                    onError: (err) => alert("خطأ تقني: " + err.message)
                 });
-            } catch (e) {
-                alert("يرجى المحاولة من متصفح Pi");
-            }
+            });
+        } catch (e) {
+            alert("يرجى فتح التطبيق من داخل Pi Browser فقط");
         }
+    }
 
-        document.getElementById('pay-btn').onclick = startProcess;
-    </script>
+    document.getElementById('pay-btn').onclick = startProcess;
+</script>
+
 </body>
 </html>
