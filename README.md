@@ -28,5 +28,3 @@ This repo contains its core logic, UI flows, and Pi Testnet integration.
 
 ```bash
 git clone [https://github.com/nexopi617/nexopi617.github.io](https://github.com/nexopi617/nexopi617.github.io)
-cd nexopi617.github.io
-# افتح الملف index.html مباشرة في المتصفح
