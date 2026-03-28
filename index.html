@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Global | نكسو العالمية</title>
+    <title>Nexo Global</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        :root { --primary: #5e35b1; --gold: #ffd700; --dark: #1a1a2e; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--dark); color: white; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        .card { background: #16213e; padding: 40px 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); width: 85%; max-width: 450px; border-bottom: 5px solid var(--gold); }
-        .logo { font-size: 40px; font-weight: bold; color: var(--gold); margin-bottom: 5px; }
-        .pay-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--primary), #7e57c2); color: white; border: none; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.4s; }
-        .footer { margin-top: 25px; font-size: 13px; color: #533483; }
+        body { font-family: sans-serif; background: #1a1a2e; color: white; text-align: center; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: #16213e; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; border-bottom: 5px solid #ffd700; }
+        .btn { width: 100%; padding: 15px; background: #5e35b1; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div class="card">
-    <div class="logo">NEXO</div>
-    <h2>نكسو العالمية - بوابة التوثيق</h2>
-    <p>أهلاً بك. اضغط أدناه لإتمام الربط الرقمي وتفعيل المشروع. يرجى استخدام البصمة فور ظهور طلب المحفظة.</p>
-    <button id="pay-btn" class="pay-btn">تأكيد ودفع 0.001 Pi</button>
-    <div class="footer">المطور: Mohamed Ammar &copy; 2026</div>
-</div>
-
-<script>
-    const Pi = window.Pi;
-    Pi.init({ version: "2.0", sandbox: false });
-
-    async function startProcess() {
-        try {
+    <div class="card">
+        <h1>NEXO GLOBAL</h1>
+        <p>بوابة التوثيق الرقمي</p>
+        <button id="btn" class="btn">تأكيد ودفع 0.001 Pi</button>
+        <p style="font-size: 12px; color: #533483;">المطور: Mohamed Ammar</p>
+    </div>
+    <script>
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0", sandbox: false });
+        document.getElementById('btn').onclick = function() {
             Pi.authenticate(['payments', 'username'], function(p){}).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.001,
-                    memo: "التوثيق النهائي
+                    memo: "Nexo Verification",
+                    metadata: { appId: "nexopi617" }
+                }, {
+                    onReadyForServerApproval: function(id) { console.log("Approved"); },
+                    onReadyForServerCompletion: function(id, tx) { alert("تم التوثيق بنجاح!"); },
+                    onCancel: function(id) { },
+                    onError: function(err) { alert("خطأ: " + err.message); }
+                });
+            });
+        };
+    </script>
+</body>
+</html>
+
                         
