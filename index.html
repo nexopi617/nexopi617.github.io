@@ -3,45 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Global</title>
+    <title>Nexo Global | True Union</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { background: #16213e; padding: 30px; border-radius: 20px; border-bottom: 5px solid #ffd700; width: 80%; }
-        .btn { background: #5e35b1; color: white; padding: 15px 30px; border: none; border-radius: 10px; font-size: 20px; cursor: pointer; width: 100%; }
+        :root { --primary: #5e35b1; --accent: #ffd700; --bg: #0f0f1e; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .container { width: 90%; max-width: 400px; background: #16213e; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid var(--accent); text-align: center; }
+        .user-info { background: rgba(94, 53, 177, 0.2); padding: 10px; border-radius: 15px; margin-bottom: 20px; font-size: 14px; border: 1px dashed var(--primary); }
+        h1 { color: var(--accent); margin-bottom: 5px; font-size: 24px; }
+        p { color: #ccc; font-size: 14px; margin-bottom: 25px; }
+        .btn-pay { background: linear-gradient(45deg, #5e35b1, #7b1fa2); color: white; border: none; padding: 15px; width: 100%; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .btn-pay:active { transform: scale(0.98); }
+        .footer { margin-top: 25px; font-size: 10px; color: #555; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>NEXO GLOBAL</h1>
-        <p>بوابة التوثيق السريع</p>
-        <button id="btn" class="btn">تأكيد ودفع 0.001 Pi</button>
-        <p style="font-size: 10px; opacity: 0.5;">المطور: Mohamed Ammar</p>
+
+<div class="container">
+    <div id="user-box" class="user-info">جاري التعرف على الحساب...</div>
+    <h1>NEXO GLOBAL</h1>
+    <p>منصة التوثيق الرقمي - True Union</p>
+    
+    <button id="pay-button" class="btn-pay">تفعيل الخدمة (0.001 Pi)</button>
+
+    <div class="footer">
+        بواسطة: Mohamed Ammar <br>
+        معاملة موثقة على Pi Mainnet
     </div>
+</div>
 
-    <script>
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: false });
+<script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: false });
 
-        document.getElementById('btn').onclick = function() {
-            Pi.authenticate(['payments', 'username'], function(p){}).then(function(auth) {
-                Pi.createPayment({
-                    amount: 0.001,
-                    memo: "Nexo Verification",
-                    metadata: { appId: "nexopi617" }
-                }, {
-                    // السطر التالي هو السر لتجنب "Paiement expiré"
-                    onReadyForServerApproval: (id) => { 
-                        console.log("Auto-Approving...");
-                    },
-                    onReadyForServerCompletion: (id, tx) => { 
-                        alert("تم التوثيق بنجاح!"); 
-                    },
-                    onCancel: (id) => { },
-                    onError: (err) => { alert("حاول مرة أخرى بسرعة: " + err.message); }
-                });
-            });
-        };
-    </script>
+    // التعرف التلقائي على المستخدم
+    Pi.authenticate(['payments', 'username'], function(p){}).then(function(auth) {
+        document.getElementById('user-box').innerText = "مرحباً: " + auth.user.username;
+    }).catch(function(err) {
+        document.getElementById('user-box').innerText = "يرجى الفتح من متصفح Pi";
+    });
+
+    document.getElementById('pay-button').onclick = function() {
+        Pi.createPayment({
+            amount: 0.001,
+            memo: "Nexo Service Activation",
+            metadata: { type: "verification" }
+        }, {
+            onReadyForServerApproval: function(paymentId) { console.log("Approved"); },
+            onReadyForServerCompletion: function(paymentId, txid) {
+                alert("تم التوثيق بنجاح! رقم المعاملة: " + txid);
+            },
+            onCancel: function(paymentId) { },
+            onError: function(error, payment) { alert("حدث خطأ: " + error.message); }
+        });
+    };
+</script>
+
 </body>
 </html>
