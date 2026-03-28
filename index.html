@@ -3,40 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Global</title>
+    <title>Nexo Global | نكسو العالمية</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        body { font-family: sans-serif; background: #1a1a2e; color: white; text-align: center; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { background: #16213e; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; border-bottom: 5px solid #ffd700; }
-        .btn { width: 100%; padding: 15px; background: #5e35b1; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        :root { --primary: #5e35b1; --gold: #ffd700; --dark: #1a1a2e; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--dark); 
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            text-align: center;
+        }
+        .card { 
+            background: #16213e; 
+            padding: 40px 20px; 
+            border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+            width: 85%; 
+            max-width: 450px; 
+            border-bottom: 5px solid var(--gold); 
+        }
+        .logo { font-size: 40px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+        h2 { margin: 10px 0; font-size: 22px; }
+        p { color: #bdc3c7; font-size: 14px; margin-bottom: 30px; }
+        .pay-btn { 
+            width: 100%; 
+            padding: 18px; 
+            background: linear-gradient(45deg, var(--primary), #7e57c2); 
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .footer { margin-top: 25px; font-size: 12px; color: #533483; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>NEXO GLOBAL</h1>
-        <p>بوابة التوثيق الرقمي</p>
-        <button id="btn" class="btn">تأكيد ودفع 0.001 Pi</button>
-        <p style="font-size: 12px; color: #533483;">المطور: Mohamed Ammar</p>
-    </div>
-    <script>
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: false });
-        document.getElementById('btn').onclick = function() {
-            Pi.authenticate(['payments', 'username'], function(p){}).then(function(auth) {
+
+<div class="card">
+    <div class="logo">NEXO</div>
+    <h2>نكسو العالمية - بوابة التوثيق</h2>
+    <p>أهلاً بك يا محمد. اضغط أدناه لإتمام الربط الرقمي. يرجى استخدام البصمة فور ظهور طلب المحفظة لتجنب انتهاء الوقت.</p>
+    
+    <button id="pay-btn" class="pay-btn">تأكيد ودفع 0.001 Pi</button>
+    
+    <div class="footer">المطور: Mohamed Ammar &copy; 2026</div>
+</div>
+
+<script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: false });
+
+    async function startProcess() {
+        try {
+            // طلب المصادقة أولاً
+            const scopes = ['payments', 'username'];
+            Pi.authenticate(scopes, function(p){}).then(function(auth) {
+                
+                // إنشاء عملية الدفع
                 Pi.createPayment({
                     amount: 0.001,
                     memo: "Nexo Verification",
                     metadata: { appId: "nexopi617" }
                 }, {
-                    onReadyForServerApproval: function(id) { console.log("Approved"); },
-                    onReadyForServerCompletion: function(id, tx) { alert("تم التوثيق بنجاح!"); },
-                    onCancel: function(id) { },
-                    onError: function(err) { alert("خطأ: " + err.message); }
+                    onReadyForServerApproval: function(paymentId) {
+                        console.log("Approved locally: " + paymentId);
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        alert("مبروك! تم التوثيق بنجاح.");
+                    },
+                    onCancel: function(paymentId) { 
+                        console.log("Cancelled"); 
+                    },
+                    onError: function(error, payment) {
+                        alert("تنبيه: " + error.message);
+                    }
                 });
             });
-        };
-    </script>
+        } catch (e) {
+            alert("يرجى فتح الموقع من متصفح Pi Browser فقط");
+        }
+    }
+
+    document.getElementById('pay-btn').onclick = startProcess;
+</script>
+
 </body>
 </html>
-
-                        
