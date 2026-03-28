@@ -6,27 +6,68 @@
     <title>Nexo Global | نكسو العالمية</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        :root { --primary: #5e35b1; --gold: #ffd700; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: white; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .card { background: #16213e; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; border-top: 4px solid var(--gold); }
-        .logo { font-size: 32px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
-        h2 { margin: 10px 0; font-size: 22px; }
-        p { color: #95a5a6; font-size: 14px; margin-bottom: 25px; }
-        .pay-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .pay-btn:hover { background: #4527a0; transform: translateY(-2px); }
-        .footer { margin-top: 20px; font-size: 12px; color: #533483; }
+        :root { --primary: #5e35b1; --gold: #ffd700; --dark: #1a1a2e; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--dark); 
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            text-align: center;
+        }
+        .card { 
+            background: #16213e; 
+            padding: 40px 20px; 
+            border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+            width: 85%; 
+            max-width: 450px; 
+            border-bottom: 5px solid var(--gold); 
+        }
+        .logo { 
+            font-size: 40px; 
+            font-weight: bold; 
+            color: var(--gold); 
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 5px;
+        }
+        h2 { margin: 15px 0; font-size: 24px; color: #fff; }
+        p { color: #bdc3c7; font-size: 15px; line-height: 1.6; margin-bottom: 30px; }
+        .pay-btn { 
+            width: 100%; 
+            padding: 18px; 
+            background: linear-gradient(45deg, var(--primary), #7e57c2); 
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.4s; 
+            box-shadow: 0 5px 15px rgba(94, 53, 177, 0.4);
+        }
+        .pay-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .footer { 
+            margin-top: 25px; 
+            font-size: 13px; 
+            color: #533483; 
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div class="logo">NEXO</div>
-    <h2>نكسو العالمية - الخطوة النهائية</h2>
-    <p>أنت الآن في مرحلة التوثيق الرقمي للمشروع. يرجى تأكيد العملية لتفعيل هويتك في النظام البيئي.</p>
+    <h2>نكسو العالمية - بوابة التوثيق</h2>
+    <p>أهلاً بك يا محمد. تطبيقك الآن متصل بشبكة Pi. يرجى الضغط على الزر أدناه لإتمام عملية الربط الرقمي وتفعيل المشروع رسمياً.</p>
     
-    <button id="pay-btn" class="pay-btn">دفع 0.001 Pi الآن</button>
+    <button id="pay-btn" class="pay-btn">تأكيد ودفع 0.001 Pi</button>
     
-    <div class="footer">تطوير: Mohamed Ammar &copy; 2026</div>
+    <div class="footer">المطور: Mohamed Ammar &copy; 2026</div>
 </div>
 
 <script>
@@ -36,24 +77,28 @@
     async function startProcess() {
         try {
             const scopes = ['payments', 'username'];
+            
             function onIncompletePaymentFound(payment) {
-                console.log("Found incomplete payment", payment);
+                console.log("Incomplete payment:", payment);
             };
 
+            // بدء عملية المصادقة والدفع
             Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.001,
-                    memo: "Nexo Step 10 Final Fix",
+                    memo: "التوثيق النهائي لتطبيق نكسو العالمية",
                     metadata: { appId: "nexopi617" }
                 }, {
-                    onReadyForServerApproval: (id) => console.log("Approved ID:", id),
-                    onReadyForServerCompletion: (id, tx) => alert("تم التوثيق بنجاح! رقم المعاملة: " + tx),
-                    onCancel: (id) => console.log("User cancelled"),
-                    onError: (err) => alert("خطأ تقني: " + err.message)
+                    onReadyForServerApproval: (id) => console.log("Payment ID:", id),
+                    onReadyForServerCompletion: (id, tx) => {
+                        alert("تم التوثيق بنجاح! نكسو العالمية الآن في الخدمة.");
+                    },
+                    onCancel: (id) => console.log("Cancelled"),
+                    onError: (err) => alert("تنبيه: " + err.message)
                 });
             });
         } catch (e) {
-            alert("يرجى فتح التطبيق من داخل Pi Browser فقط");
+            alert("يرجى فتح الموقع من متصفح Pi Browser فقط");
         }
     }
 
